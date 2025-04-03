@@ -9,6 +9,7 @@ const { prefix, userId, appId } = Astro.params
 
 const res = await fetch(`${Astro.locals.runtime.env.STEAM_API_URL}/${prefix}/${userId}/stats/${appId}`)
 if (res.status === 404) return new Response(undefined, { status: 404 })
+if (res.status === 401) return Astro.rewrite('/401')
 
 const { user, app } = (await res.json()) as UserGameStats
 

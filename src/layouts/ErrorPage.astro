@@ -1,0 +1,36 @@
+---
+import '../styles/global.css'
+
+export interface Props {
+  status: number
+  message: string
+}
+
+const { status, message } = Astro.props
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="generator" content={Astro.generator} />
+    <link rel="shortcut icon" href="/favicon.svg" type="svg+xml" />
+
+    <!-- Robots -->
+    <meta name="robots" content="noindex, nofollow" />
+
+    <!-- Primary Meta Tags -->
+    <title>{message}</title>
+    <meta name="title" content={message} />
+  </head>
+  <body
+    class="bg-[#1b2838] flex flex-col items-center justify-center w-full overflow-y-auto min-h-dvh text-white text-xs leading-[calc(17/12)] p-2.5 gap-4.5"
+  >
+    <img class="h-31" src="/favicon.svg" alt="Logo" />
+    <h1 class="text-3xl font-bold">
+      <span class="text-[rgb(184_188_191_/_80%)]">{status} | </span>
+      <span>{message}</span>
+    </h1>
+  </body>
+</html>

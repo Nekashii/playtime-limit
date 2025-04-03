@@ -1,0 +1,7 @@
+---
+import ErrorPage from '../layouts/ErrorPage.astro'
+
+export const prerender = false
+---
+
+<ErrorPage status={401} message="Error de autenticación" />
