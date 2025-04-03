@@ -5,9 +5,9 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "playtime-limit",
+  "main": "./dist/_worker.js/index.js",
   "compatibility_date": "2025-04-02",
   "compatibility_flags": ["nodejs_compat"],
-  "pages_build_output_dir": "./dist",
   "observability": {
     "enabled": true
   },
