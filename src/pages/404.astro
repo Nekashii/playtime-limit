@@ -1,5 +1,7 @@
 ---
 import ErrorPage from '../layouts/ErrorPage.astro'
+
+export const prerender = false
 ---
 
 <ErrorPage status={404} message="Página no encontrada" />
