@@ -5,10 +5,6 @@ import type { UserStatus } from '../../../../types/user-status.type'
 
 export const prerender = false
 
-const title = 'Horas de juego'
-const description = 'Seguimiento de limite de horas de juego'
-const canonicalURL = new URL(Astro.url.pathname, Astro.site)
-
 const { prefix, userId, appId } = Astro.params
 
 const res = await fetch(`${Astro.locals.runtime.env.STEAM_API_URL}/${prefix}/${userId}/stats/${appId}`)
@@ -32,6 +28,10 @@ const [outerGradient, innerGradient] = (
     ],
   } satisfies Record<UserStatus, [string, string]>
 )[user.status]
+
+const title = `${app.name} - ${user.profileName} - Tiempo de juego`
+const description = `Seguimiento de tiempo de juego en ${app.name} para ${user.profileName}`
+const canonicalURL = new URL(Astro.url.pathname, Astro.site)
 ---
 
 <!doctype html>
