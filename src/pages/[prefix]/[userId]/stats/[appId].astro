@@ -1,18 +1,37 @@
 ---
+import type { UserGameStats } from '../../../../models/user-game-stats.model'
 import '../../../../styles/global.css'
+import type { UserStatus } from '../../../../types/user-status.type'
 
 export const prerender = false
 
 const title = 'Horas de juego'
 const description = 'Seguimiento de limite de horas de juego'
 const canonicalURL = new URL(Astro.url.pathname, Astro.site)
-const [outerGradient, innerGradient] = [
-  ['linear-gradient( to bottom, rgba(106,106,106,1) 5%, rgba(85,85,85,1) 95%)', 'linear-gradient( to bottom, #515151 5%, #474747 95%)'],
-  ['linear-gradient( to bottom, rgba(83,164,196,1) 5%, rgba(69,128,151,1) 95%)', 'linear-gradient( to bottom, #41778f 5%, #3d697b 95%)'],
-  ['linear-gradient( to bottom, rgba(143,185,59,1) 5%, rgba(110,140,49,1) 95%)', 'linear-gradient( to bottom, #66812e 5%, #59702b 95%)'],
-][0]
-const played = 80
-const limit = 80
+
+const { prefix, userId, appId } = Astro.params
+
+const res = await fetch(`${Astro.locals.runtime.env.STEAM_API_URL}/${prefix}/${userId}/stats/${appId}`)
+if (res.status === 404) return new Response(undefined, { status: 404 })
+
+const { user, app } = (await res.json()) as UserGameStats
+
+const [outerGradient, innerGradient] = (
+  {
+    'offline': [
+      'linear-gradient( to bottom, rgba(106,106,106,1) 5%, rgba(85,85,85,1) 95%)',
+      'linear-gradient( to bottom, #515151 5%, #474747 95%)',
+    ],
+    'online': [
+      'linear-gradient( to bottom, rgba(83,164,196,1) 5%, rgba(69,128,151,1) 95%)',
+      'linear-gradient( to bottom, #41778f 5%, #3d697b 95%)',
+    ],
+    'in-game': [
+      'linear-gradient( to bottom, rgba(143,185,59,1) 5%, rgba(110,140,49,1) 95%)',
+      'linear-gradient( to bottom, #66812e 5%, #59702b 95%)',
+    ],
+  } satisfies Record<UserStatus, [string, string]>
+)[user.status]
 ---
 
 <!doctype html>
@@ -55,46 +74,61 @@ const limit = 80
         <img
           class="h-16.5 w-16.5 p-0.25 object-cover"
           style={`background: ${innerGradient}`}
-          src="https://cdn.fastly.steamstatic.com/steamcommunity/public/images/items/2022180/e081bb44f8c79e9b5ae44d1be71aae559d7fcf88.gif"
-          alt=""
+          src={user.avatar}
+          alt=`avatar de ${user.profileName}`
         />
-        <img
-          class="h-16 w-16 object-cover absolute top-1/2 left-1/2 -translate-1/2 scale-[1.225]"
-          src="https://cdn.fastly.steamstatic.com/steamcommunity/public/images/items/2861720/fc0fc2ac8d4ade722f15d3f720817d942fd58aaa.png"
-          alt=""
-        />
+        {
+          user.avatarFrame ? (
+            <img
+              class="h-16 w-16 object-cover absolute top-1/2 left-1/2 -translate-1/2 scale-[1.225]"
+              src={user.avatarFrame}
+              alt={`marco de ${user.profileName}`}
+            />
+          ) : undefined
+        }
       </div>
-      <h1 class="text-[#EBEBEB] text-[26px]">LynxLA</h1>
+      <h1 class="text-[#EBEBEB] text-[26px]">{user.profileName}</h1>
     </div>
     <div class="bg-black/20 p-2.5 gap-2.5 grid grid-cols-[auto_1fr] items-start text-[rgb(184_188_191_/_80%)] w-full max-w-160">
       <picture>
-        <source media="(min-width: 48rem)" srcset="https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/346110/header.jpg" />
-        <img
-          class="h-41 md:h-30"
-          src="https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/346110/library_600x900.jpg"
-          alt=""
-        />
+        <source media="(min-width: 48rem)" srcset={app.coverLandscape} />
+        <img class="h-41 md:h-30" src={app.coverPortrait} alt="" />
       </picture>
       <div class="gap-x-2.5 gap-y-3.5 grid grid-cols-[1fr_1fr] auto-rows-auto">
-        <h2 class="col-span-2 text-[17px] text-white">ARK: Survival Evolved</h2>
+        <h2 class="col-span-2 text-[17px] text-white">{app.name}</h2>
         <div class="col-span-2 md:col-span-1">
           <h3 class="uppercase font-bold">Tiempo total de juego</h3>
-          <p>13 horas</p>
+          <p>{app.playtimeForever} hora{app.playtimeForever !== 1 ? 's' : ''}</p>
         </div>
         <div class="col-span-2 md:col-span-1">
           <h3 class="uppercase font-bold">Últimas 2 semanas</h3>
-          <p>13 horas</p>
+          <p>{app.playtime2weeks} hora{app.playtime2weeks !== 1 ? 's' : ''}</p>
         </div>
-        <div class="col-span-2 flex flex-col gap-1.5">
-          <div class="flex justify-between gap-2.5">
-            <h3 class="uppercase font-bold">Horas jugadas en el mes:</h3>
-            <p>{played}/{limit}</p>
-          </div>
-          <div class="bg-[#B8BCBF] h-1.5 rounded-xs overflow-hidden">
-            <div class="h-full" style={`background-color: #${played >= limit ? 'C02942' : '1A9FFF'}; width: ${(played / limit) * 100}%`}>
-            </div>
-          </div>
-        </div>
+        {
+          app.playtimeMonth ? (
+            app.playtimeLimit ? (
+              <div class="col-span-2 flex flex-col gap-1.5">
+                <div class="flex justify-between gap-2.5">
+                  <h3 class="uppercase font-bold">Horas jugadas en el mes</h3>
+                  <p>
+                    {app.playtimeMonth}/{app.playtimeLimit}
+                  </p>
+                </div>
+                <div class="bg-[#B8BCBF] h-1.5 rounded-xs overflow-hidden">
+                  <div
+                    class="h-full"
+                    style={`background-color: #${app.playtimeMonth >= app.playtimeLimit ? 'C02942' : '1A9FFF'}; width: ${(app.playtimeMonth / app.playtimeLimit) * 100}%`}
+                  />
+                </div>
+              </div>
+            ) : (
+              <div class="col-span-2 md:col-span-1">
+                <h3 class="uppercase font-bold">Horas jugadas en el mes</h3>
+                <p>{app.playtimeMonth}</p>
+              </div>
+            )
+          ) : undefined
+        }
       </div>
     </div>
   </body>
