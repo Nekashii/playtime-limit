@@ -1,1 +1,10 @@
 @import 'tailwindcss';
+
+@font-face {
+  font-family: 'Motiva Sans';
+  src: url('/fonts/Motiva Sans/MotivaSans-Regular_woff.ttf');
+}
+
+@theme {
+  --font-sans: 'Motiva Sans', sans-serif;
+}
