@@ -9,7 +9,8 @@ import tailwindcss from '@tailwindcss/vite'
 export default defineConfig({
   site: 'https://horas-juego.nekashii.dev',
   redirects: {
-    "/lana": "/profiles/76561199441037031/stats/346110"
+    '/': '/profiles/76561199441037031/stats/346110',
+    '/lana': '/profiles/76561199441037031/stats/346110',
   },
   adapter: cloudflare({
     platformProxy: {
