@@ -100,11 +100,11 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site)
         <h2 class="col-span-2 text-[17px] text-white">{app.name}</h2>
         <div class="col-span-2 md:col-span-1">
           <h3 class="uppercase font-bold">Tiempo total de juego</h3>
-          <p>{app.playtimeForever} hora{app.playtimeForever !== 1 ? 's' : ''}</p>
+          <p>{app.playtimeForever.toLocaleString()} hora{app.playtimeForever !== 1 ? 's' : ''}</p>
         </div>
         <div class="col-span-2 md:col-span-1">
           <h3 class="uppercase font-bold">Últimas 2 semanas</h3>
-          <p>{app.playtime2weeks} hora{app.playtime2weeks !== 1 ? 's' : ''}</p>
+          <p>{app.playtime2weeks.toLocaleString()} hora{app.playtime2weeks !== 1 ? 's' : ''}</p>
         </div>
         {
           app.playtimeMonth ? (
@@ -113,7 +113,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site)
                 <div class="flex justify-between gap-2.5">
                   <h3 class="uppercase font-bold">Horas jugadas en el mes</h3>
                   <p>
-                    {app.playtimeMonth}/{app.playtimeLimit}
+                    {app.playtimeMonth.toLocaleString()}/{app.playtimeLimit.toLocaleString()}
                   </p>
                 </div>
                 <div class="bg-[#B8BCBF] h-1.5 rounded-xs overflow-hidden">
@@ -126,7 +126,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site)
             ) : (
               <div class="col-span-2 md:col-span-1">
                 <h3 class="uppercase font-bold">Horas jugadas en el mes</h3>
-                <p>{app.playtimeMonth}</p>
+                <p>{app.playtimeMonth.toLocaleString()}</p>
               </div>
             )
           ) : undefined
