@@ -6,8 +6,9 @@ import type { UserStatus } from '../../../../types/user-status.type'
 export const prerender = false
 
 const { prefix, userId, appId } = Astro.params
+const { STEAM_API_URL, STEAM_API_AUTH_TOKEN } = Astro.locals.runtime.env
 
-const res = await fetch(`${Astro.locals.runtime.env.STEAM_API_URL}/${prefix}/${userId}/stats/${appId}`)
+const res = await fetch(`${STEAM_API_URL}/${prefix}/${userId}/stats/${appId}`, { headers: { Authorization: STEAM_API_AUTH_TOKEN } })
 if (res.status === 404) return new Response(undefined, { status: 404 })
 if (res.status === 401) return Astro.rewrite('/401')
 
